@@ -36,13 +36,6 @@
 		<div class="layout-navbars-breadcrumb-user-icon" @click="onLayoutSetingClick">
 			<i class="icon-skin iconfont" :title="$t('message.user.title3')"></i>
 		</div>
-		<div class="layout-navbars-breadcrumb-user-icon" ref="userNewsBadgeRef" v-click-outside="onUserNewsClick">
-			<el-badge :is-dot="true">
-				<el-icon :title="$t('message.user.title4')">
-					<ele-Bell />
-				</el-icon>
-			</el-badge>
-		</div>
 		<el-popover
 			ref="userNewsRef"
 			:virtual-ref="userNewsBadgeRef"
@@ -95,7 +88,6 @@ import mittBus from '/@/utils/mitt';
 import { Session, Local } from '/@/utils/storage';
 
 // 引入组件
-const UserNews = defineAsyncComponent(() => import('/@/layout/navBars/topBar/userNews.vue'));
 const Search = defineAsyncComponent(() => import('/@/layout/navBars/topBar/search.vue'));
 
 // 定义变量内容
