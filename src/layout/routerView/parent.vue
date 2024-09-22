@@ -22,8 +22,6 @@ import { useThemeConfig } from '/@/stores/themeConfig';
 import { Session } from '/@/utils/storage';
 import mittBus from '/@/utils/mitt';
 
-// 引入组件
-
 // 定义变量内容
 const route = useRoute();
 const router = useRouter();
