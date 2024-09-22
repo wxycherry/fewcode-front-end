@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts" name="layoutParentView">
-import { defineAsyncComponent, computed, reactive, onBeforeMount, onUnmounted, nextTick, watch, onMounted } from 'vue';
+import { computed, reactive, onBeforeMount, onUnmounted, nextTick, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { useKeepALiveNames } from '/@/stores/keepAliveNames';
@@ -23,7 +23,6 @@ import { Session } from '/@/utils/storage';
 import mittBus from '/@/utils/mitt';
 
 // 引入组件
-const Iframes = defineAsyncComponent(() => import('/@/layout/routerView/iframes.vue'));
 
 // 定义变量内容
 const route = useRoute();
