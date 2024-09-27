@@ -1,167 +1,222 @@
 <template>
-	<div class="system-dept-dialog-container">
-		<el-dialog :title="state.dialog.title" v-model="state.dialog.isShowDialog" width="769px">
-			<el-form ref="deptDialogFormRef" :model="state.ruleForm" size="default" label-width="90px">
-				<el-row :gutter="35">
-					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
-						<el-form-item label="上级部门">
-							<el-cascader
-								:options="state.deptData"
-								:props="{ checkStrictly: true, value: 'deptName', label: 'deptName' }"
-								placeholder="请选择部门"
-								clearable
-								class="w100"
-								v-model="state.ruleForm.deptLevel"
-							>
-								<template #default="{ node, data }">
-									<span>{{ data.deptName }}</span>
-									<span v-if="!node.isLeaf"> ({{ data.children.length }}) </span>
-								</template>
-							</el-cascader>
-						</el-form-item>
-					</el-col>
-					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
-						<el-form-item label="部门名称">
-							<el-input v-model="state.ruleForm.deptName" placeholder="请输入部门名称" clearable></el-input>
-						</el-form-item>
-					</el-col>
-					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
-						<el-form-item label="负责人">
-							<el-input v-model="state.ruleForm.person" placeholder="请输入负责人" clearable></el-input>
-						</el-form-item>
-					</el-col>
-					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
-						<el-form-item label="手机号">
-							<el-input v-model="state.ruleForm.phone" placeholder="请输入手机号" clearable></el-input>
-						</el-form-item>
-					</el-col>
-					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
-						<el-form-item label="邮箱">
-							<el-input v-model="state.ruleForm.email" placeholder="请输入" clearable></el-input>
-						</el-form-item>
-					</el-col>
-					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
-						<el-form-item label="排序">
-							<el-input-number v-model="state.ruleForm.sort" :min="0" :max="999" controls-position="right" placeholder="请输入排序" class="w100" />
-						</el-form-item>
-					</el-col>
-					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
-						<el-form-item label="部门状态">
-							<el-switch v-model="state.ruleForm.status" inline-prompt active-text="启" inactive-text="禁"></el-switch>
-						</el-form-item>
-					</el-col>
-					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
-						<el-form-item label="部门描述">
-							<el-input v-model="state.ruleForm.describe" type="textarea" placeholder="请输入部门描述" maxlength="150"></el-input>
-						</el-form-item>
-					</el-col>
-				</el-row>
-			</el-form>
-			<template #footer>
-				<span class="dialog-footer">
-					<el-button @click="onCancel" size="default">取 消</el-button>
-					<el-button type="primary" @click="onSubmit" size="default">{{ state.dialog.submitTxt }}</el-button>
-				</span>
-			</template>
-		</el-dialog>
-	</div>
+  <div class="system-dept-dialog-container">
+    <el-dialog :title="state.dialog.title" v-model="state.dialog.isShowDialog" width="50%">
+      <el-form ref="deptDialogFormRef" :model="state.ruleForm" :rules="state.rules" size="default" label-width="90px">
+        <el-row :gutter="35">
+          <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+            <el-form-item label="父部门" prop="ancestorsArray">
+              <el-cascader
+                  :options="props.deptOptions"
+                  :props="{ checkStrictly: true, value: 'id', label: 'deptName' }"
+                  placeholder="请选择部门"
+                  filterable
+                  clearable
+                  class="w100"
+                  v-model="state.ruleForm.ancestorsArray"
+              >
+                <template #default="{ node, data }">
+                  <span>{{ data.deptName }}</span>
+                  <span v-if="!node.isLeaf"> ({{ data.children.length }}) </span>
+                </template>
+              </el-cascader>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+            <el-form-item label="部门名称" prop="deptName">
+              <el-input v-model="state.ruleForm.deptName" placeholder="请输入部门名称" clearable></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+            <el-form-item label="显示顺序" prop="sortNum">
+              <el-input v-model="state.ruleForm.sortNum" placeholder="请输入显示顺序" clearable></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+            <el-form-item label="负责人" prop="leader">
+              <el-input v-model="state.ruleForm.leader" placeholder="请输入负责人" clearable></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+            <el-form-item label="联系电话" prop="phone">
+              <el-input v-model="state.ruleForm.phone" placeholder="请输入联系电话" clearable></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+            <el-form-item label="邮箱" prop="email">
+              <el-input v-model="state.ruleForm.email" placeholder="请输入邮箱" clearable></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+            <el-form-item label="部门状态" prop="status">
+              <el-select v-model="state.ruleForm.status" placeholder="请选择部门状态" clearable  class="w100">
+                <el-option
+                    v-for="dict in sys_status"
+                    :key="Number(dict.value)"
+                    :label="dict.label"
+                    :value="Number(dict.value)"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="onCancel()" size="default">取 消</el-button>
+          <el-button type="primary" @click="onSubmit" size="default">{{ state.dialog.submitTxt }}</el-button>
+        </span>
+      </template>
+    </el-dialog>
+  </div>
 </template>
 
-<script setup lang="ts" name="systemDeptDialog">
-import { reactive, ref } from 'vue';
-
+<script setup lang="ts" name="dictDialog">
+import { defineAsyncComponent, nextTick, reactive, ref, getCurrentInstance } from 'vue';
+import { useDeptApi } from '/@/api/system/dept';
+import { ElMessage } from "element-plus";
 // 定义子组件向父组件传值/事件
 const emit = defineEmits(['refresh']);
 
+// 定义父组件传过来的值
+const props = defineProps({
+  deptOptions: {
+    type: Array,
+    default: () => [],
+  }
+});
+
+// 获取字典
+const { proxy } = getCurrentInstance();
+const { sys_status } = proxy.parseDict("sys_status");
+
+
 // 定义变量内容
+const useDept = useDeptApi();
 const deptDialogFormRef = ref();
 const state = reactive({
-	ruleForm: {
-		deptLevel: [] as string[], // 上级部门
-		deptName: '', // 部门名称
-		person: '', // 负责人
-		phone: '', // 手机号
-		email: '', // 邮箱
-		sort: 0, // 排序
-		status: true, // 部门状态
-		describe: '', // 部门描述
-	},
-	deptData: [] as DeptTreeType[], // 部门数据
-	dialog: {
-		isShowDialog: false,
-		type: '',
-		title: '',
-		submitTxt: '',
-	},
+  ruleForm: {
+    ancestors: '',
+    ancestorsArray: [],
+    parentId: '',
+    deptName: '',
+    sortNum: '',
+    leader: '',
+    phone: '',
+    email: '',
+    status: 1,
+  },
+  dialog: {
+    isShowDialog: false,
+    type: '',
+    title: '',
+    submitTxt: '',
+  },
+  rules: {
+    ancestorsArray: { required: true, message: '请选择父部门', trigger: 'blur' },
+    deptName: { required: true, message: '请输入部门名称', trigger: 'blur' },
+    sortNum: { required: true, message: '请输入显示顺序', trigger: 'blur' },
+    status: { required: true, message: '请输入部门状态', trigger: 'blur' },
+  },
 });
 
 // 打开弹窗
-const openDialog = (type: string, row: RowDeptType) => {
-	if (type === 'edit') {
-		row.deptLevel = ['vueNextAdmin'];
-		row.person = 'lyt';
-		row.phone = '12345678910';
-		row.email = 'vueNextAdmin@123.com';
-		state.ruleForm = row;
-		state.dialog.title = '修改部门';
-		state.dialog.submitTxt = '修 改';
-	} else {
-		state.dialog.title = '新增部门';
-		state.dialog.submitTxt = '新 增';
-		// 清空表单，此项需加表单验证才能使用
-		// nextTick(() => {
-		// 	deptDialogFormRef.value.resetFields();
-		// });
-	}
-	state.dialog.isShowDialog = true;
-	getMenuData();
+const openDialog = (type: string, row) => {
+  resetForm();
+  if (type === 'edit') {
+    useDept.getDeptById(row.id).then(res => {
+      state.ruleForm = res;
+      state.ruleForm.ancestorsArray = state.ruleForm.ancestors.split(",").map(item => Number(item));
+      console.log(state.ruleForm.ancestorsArray)
+      state.dialog.title = '修改用户中心-部门';
+      state.dialog.submitTxt = '修 改';
+    });
+  } else {
+    if(row) {
+      console.log(row.ancestors)
+      if(row.ancestors) {
+        state.ruleForm.ancestorsArray = row.ancestors.split(",").map(item => Number(item));
+      }
+      state.ruleForm.ancestorsArray.push(row.id)
+    }
+    console.log(state.ruleForm.ancestorsArray)
+    state.dialog.title = '新增用户中心-部门';
+    state.dialog.submitTxt = '新 增';
+  }
+  state.dialog.type = type;
+  state.dialog.isShowDialog = true;
 };
 // 关闭弹窗
 const closeDialog = () => {
-	state.dialog.isShowDialog = false;
+  state.dialog.isShowDialog = false;
 };
 // 取消
 const onCancel = () => {
-	closeDialog();
+  closeDialog();
 };
+
 // 提交
 const onSubmit = () => {
-	closeDialog();
-	emit('refresh');
-	// if (state.dialog.type === 'add') { }
+  // 验证表单
+  Promise.all([
+    currentValidate(deptDialogFormRef),
+  ]).then(res => {
+    const validateResult = res.every(item => !!item);
+    if (validateResult) {
+      state.ruleForm.parentId = state.ruleForm.ancestorsArray[state.ruleForm.ancestorsArray.length - 1]
+      state.ruleForm.ancestors = state.ruleForm.ancestorsArray.join(",");
+      if(state.dialog.type == 'add') {
+        useDept.createDept(state.ruleForm).then(() => {
+          ElMessage.success('创建成功');
+          closeDialog();
+          emit('refresh');
+        });
+      } else {
+        useDept.updateDept(state.ruleForm).then(() => {
+          ElMessage.success('修改成功');
+          closeDialog();
+          emit('refresh');
+        });
+      }
+    } else {
+      ElMessage.error("表单校验未通过，请重新检查提交内容");
+    }
+  });
 };
-// 初始化部门数据
-const getMenuData = () => {
-	state.deptData.push({
-		deptName: 'vueNextAdmin',
-		createTime: new Date().toLocaleString(),
-		status: true,
-		sort: Math.random(),
-		describe: '顶级部门',
-		id: Math.random(),
-		children: [
-			{
-				deptName: 'IT外包服务',
-				createTime: new Date().toLocaleString(),
-				status: true,
-				sort: Math.random(),
-				describe: '总部',
-				id: Math.random(),
-			},
-			{
-				deptName: '资本控股',
-				createTime: new Date().toLocaleString(),
-				status: true,
-				sort: Math.random(),
-				describe: '分部',
-				id: Math.random(),
-			},
-		],
-	});
+
+// 主表-表单组件验证
+const currentValidate = (pageRef) => {
+  return new Promise((resolve) => {
+    pageRef.value.validate((valid: boolean) => {
+      if (valid) resolve(valid);
+    });
+  });
 };
+// 子表-表单组件验证
+const formRulesValidate = (pageRef, sonRef: string) => {
+  return new Promise((resolve) => {
+    pageRef.value.$refs[sonRef].validate((valid: boolean) => {
+      if (valid) resolve(valid);
+    });
+  });
+};
+const resetForm = () => {
+  state.ruleForm = {
+    ancestors: '',
+    ancestorsArray: [],
+    parentId: '',
+    deptName: '',
+    sortNum: '',
+    leader: '',
+    phone: '',
+    email: '',
+    status: 1,
+  }
+}
+
 
 // 暴露变量
 defineExpose({
-	openDialog,
+  openDialog,
 });
 </script>

@@ -1,158 +1,217 @@
 <template>
-	<div class="system-user-container layout-padding">
-		<el-card shadow="hover" class="layout-padding-auto">
-			<div class="system-user-search mb15">
-				<el-input size="default" placeholder="请输入用户名称" style="max-width: 180px"> </el-input>
-				<el-button size="default" type="primary" class="ml10">
-					<el-icon>
-						<ele-Search />
-					</el-icon>
-					查询
-				</el-button>
-				<el-button size="default" type="success" class="ml10" @click="onOpenAddUser('add')">
-					<el-icon>
-						<ele-FolderAdd />
-					</el-icon>
-					新增用户
-				</el-button>
-			</div>
-			<el-table :data="state.tableData.data" v-loading="state.tableData.loading" style="width: 100%">
-				<el-table-column type="index" label="序号" width="60" />
-				<el-table-column prop="userName" label="账户名称" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="userNickname" label="用户昵称" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="roleSign" label="关联角色" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="department" label="部门" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="phone" label="手机号" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="email" label="邮箱" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="status" label="用户状态" show-overflow-tooltip>
-					<template #default="scope">
-						<el-tag type="success" v-if="scope.row.status">启用</el-tag>
-						<el-tag type="info" v-else>禁用</el-tag>
-					</template>
-				</el-table-column>
-				<el-table-column prop="describe" label="用户描述" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="createTime" label="创建时间" show-overflow-tooltip></el-table-column>
-				<el-table-column label="操作" width="100">
-					<template #default="scope">
-						<el-button :disabled="scope.row.userName === 'admin'" size="small" text type="primary" @click="onOpenEditUser('edit', scope.row)"
-							>修改</el-button
-						>
-						<el-button :disabled="scope.row.userName === 'admin'" size="small" text type="primary" @click="onRowDel(scope.row)">删除</el-button>
-					</template>
-				</el-table-column>
-			</el-table>
-			<el-pagination
-				@size-change="onHandleSizeChange"
-				@current-change="onHandleCurrentChange"
-				class="mt15"
-				:pager-count="5"
-				:page-sizes="[10, 20, 30]"
-				v-model:current-page="state.tableData.param.pageNum"
-				background
-				v-model:page-size="state.tableData.param.pageSize"
-				layout="total, sizes, prev, pager, next, jumper"
-				:total="state.tableData.total"
-			>
-			</el-pagination>
-		</el-card>
-		<UserDialog ref="userDialogRef" @refresh="getTableData()" />
-	</div>
+  <div class="system-user-container layout-padding">
+    <el-card shadow="hover" class="layout-padding-auto">
+      <div class="system-user-search">
+        <el-form :inline="true" ref="userSearchRef" :model="state.tableData.param.query" size="default">
+          <el-row>
+            <el-form-item label="用户账号" class="ml20" size="default">
+              <el-input v-model="state.tableData.param.query.account" placeholder="请输入用户账号" clearable
+                        style="max-width: 180px"></el-input>
+            </el-form-item>
+            <el-form-item label="用户姓名" class="ml20" size="default">
+              <el-input v-model="state.tableData.param.query.userName" placeholder="请输入用户姓名" clearable
+                        style="max-width: 180px"></el-input>
+            </el-form-item>
+            <el-form-item label="用户昵称" class="ml20" size="default">
+              <el-input v-model="state.tableData.param.query.nickName" placeholder="请输入用户昵称" clearable
+                        style="max-width: 180px"></el-input>
+            </el-form-item>
+            <el-form-item label="手机号码" class="ml20" size="default">
+              <el-input v-model="state.tableData.param.query.phone" placeholder="请输入手机号码" clearable
+                        style="max-width: 180px"></el-input>
+            </el-form-item>
+            <el-form-item label="用户性别" class="ml20" prop="sex">
+              <!-- 在版本 2.5.0之后， el-select 的默认宽度更改为 100% 当使用内联形式时，宽度将显示异常。 为了保持显示正常, 您需要手动配置 el-select 的宽度 -->
+              <el-select v-model="state.tableData.param.query.sex" placeholder="请选择用户性别" clearable style="width: 180px">
+                <el-option
+                    v-for="dict in sys_user_sex"
+                    :key="dict.value"
+                    :label="dict.label"
+                    :value="dict.value"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="帐号状态" class="ml20" prop="status">
+              <el-select v-model="state.tableData.param.query.status" placeholder="请选择帐号状态" clearable style="width: 180px">
+                <el-option
+                    v-for="dict in sys_status"
+                    :key="dict.value"
+                    :label="dict.label"
+                    :value="dict.value"
+                />
+              </el-select>
+            </el-form-item>
+            <el-button size="default" type="primary" class="ml20" @click="getTableData">
+              <el-icon><ele-Search /></el-icon> 查询
+            </el-button>
+            <el-button size="default" class="ml20" @click="resetQuery">
+              <el-icon><ele-Refresh /></el-icon> 重置
+            </el-button>
+          </el-row>
+        </el-form>
+      </div>
+      <el-row :gutter="35">
+        <el-button size="default" type="success" plain class="ml30" @click="onOpenAdd('add')">
+          <el-icon><ele-FolderAdd /></el-icon> 新增
+        </el-button>
+      </el-row>
+      <el-table :data="state.tableData.records" v-loading="state.tableData.loading" style="width: 100%">
+        <el-table-column type="index" label="序号" width="60" />
+        <el-table-column label="用户账号" prop="account" show-overflow-tooltip/>
+        <el-table-column label="用户姓名" prop="userName" show-overflow-tooltip/>
+        <el-table-column label="用户昵称" prop="nickName" show-overflow-tooltip/>
+        <el-table-column label="用户邮箱" prop="email" show-overflow-tooltip/>
+        <el-table-column label="手机号码" prop="phone" show-overflow-tooltip/>
+        <el-table-column label="用户性别" prop="sex" show-overflow-tooltip>
+          <template #default="scope">
+            <el-tag :type="sys_user_sex[scope.row.sex].elTagType">{{ sys_user_sex[scope.row.sex].label }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="帐号状态" prop="status" show-overflow-tooltip>
+          <template #default="scope">
+            <el-tag :type="sys_status[scope.row.status].elTagType">{{ sys_status[scope.row.status].label }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="最后登录时间" prop="loginDate" show-overflow-tooltip>
+          <template #default="scope">
+            <span>{{ parseDateTime(scope.row.loginDate) }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="100">
+          <template #default="scope">
+            <el-button v-if="auth('system:user:update')" size="small" text type="primary" @click="onOpenEdit('edit', scope.row)">修改</el-button>
+            <el-button size="small" text type="primary" @click="onRowDel(scope.row)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-pagination
+          @size-change="onHandleSizeChange"
+          @current-change="onHandleCurrentChange"
+          class="mt15"
+          :pager-count="5"
+          :page-sizes="[10, 20, 30]"
+          v-model:current-page="state.tableData.param.page.current"
+          background
+          v-model:page-size="state.tableData.param.page.size"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="state.tableData.total"
+      >
+      </el-pagination>
+    </el-card>
+    <UserDialog ref="userDialogRef" @refresh="getTableData()" />
+  </div>
 </template>
 
-<script setup lang="ts" name="systemUser">
-import { defineAsyncComponent, reactive, onMounted, ref } from 'vue';
+<script setup lang="ts" name="user">
+import { defineAsyncComponent, reactive, onMounted, ref, nextTick, getCurrentInstance } from 'vue';
 import { ElMessageBox, ElMessage } from 'element-plus';
+import { useUserApi } from '/@/api/system/user';
+import { parseDateTime } from '/@/utils/formatTime';
+import { auth } from '/@/utils/authFunction';
+
+// 获取字典
+const { proxy } = getCurrentInstance();
+const { sys_status,sys_user_sex } = proxy.parseDict("sys_status","sys_user_sex");
 
 // 引入组件
-const UserDialog = defineAsyncComponent(() => import('/@/views/system/user/dialog.vue'));
+const UserDialog = defineAsyncComponent(() => import('./dialog.vue'));
 
 // 定义变量内容
 const userDialogRef = ref();
-const state = reactive<SysUserState>({
-	tableData: {
-		data: [],
-		total: 0,
-		loading: false,
-		param: {
-			pageNum: 1,
-			pageSize: 10,
-		},
-	},
+const userSearchRef = ref();
+const useUser = useUserApi();
+const state = reactive({
+  tableData: {
+    records: [],
+    total: 0,
+    loading: false,
+    param: {
+      page: {
+        current: 1,
+        size: 10,
+      },
+      query: {
+        openId: '',
+        account: '',
+        userName: '',
+        nickName: '',
+        userType: '',
+        phone: '',
+        sex: '',
+        status: '',
+      },
+    },
+  },
 });
 
 // 初始化表格数据
 const getTableData = () => {
-	state.tableData.loading = true;
-	const data = [];
-	for (let i = 0; i < 2; i++) {
-		data.push({
-			userName: i === 0 ? 'admin' : 'test',
-			userNickname: i === 0 ? '我是管理员' : '我是普通用户',
-			roleSign: i === 0 ? 'admin' : 'common',
-			department: i === 0 ? ['vueNextAdmin', 'IT外包服务'] : ['vueNextAdmin', '资本控股'],
-			phone: '12345678910',
-			email: 'vueNextAdmin@123.com',
-			sex: '女',
-			password: '123456',
-			overdueTime: new Date(),
-			status: true,
-			describe: i === 0 ? '不可删除' : '测试用户',
-			createTime: new Date().toLocaleString(),
-		});
-	}
-	state.tableData.data = data;
-	state.tableData.total = state.tableData.data.length;
-	setTimeout(() => {
-		state.tableData.loading = false;
-	}, 500);
+  state.tableData.loading = true;
+  useUser.getPageList(state.tableData.param).then(res => {
+    state.tableData.records = res.records;
+    state.tableData.total = res.total;
+  });
+  setTimeout(() => {
+    state.tableData.loading = false;
+  }, 500);
 };
-// 打开新增用户弹窗
-const onOpenAddUser = (type: string) => {
-	userDialogRef.value.openDialog(type);
+// 打开新增用户中心-用户信息弹窗
+const onOpenAdd = (type: string) => {
+  userDialogRef.value.openDialog(type);
 };
-// 打开修改用户弹窗
-const onOpenEditUser = (type: string, row: RowUserType) => {
-	userDialogRef.value.openDialog(type, row);
+// 打开修改用户中心-用户信息弹窗
+const onOpenEdit = (type: string, row) => {
+  userDialogRef.value.openDialog(type, row);
 };
-// 删除用户
-const onRowDel = (row: RowUserType) => {
-	ElMessageBox.confirm(`此操作将永久删除账户名称：“${row.userName}”，是否继续?`, '提示', {
-		confirmButtonText: '确认',
-		cancelButtonText: '取消',
-		type: 'warning',
-	})
-		.then(() => {
-			getTableData();
-			ElMessage.success('删除成功');
-		})
-		.catch(() => {});
+// 删除用户中心-用户信息
+const onRowDel = (row) => {
+  ElMessageBox.confirm('此操作将永久删除数据，是否继续?', '提示', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning',
+  })
+      .then(() => {
+        useUser.deleteUser(row.id).then(() => {
+          getTableData();
+          ElMessage.success('删除成功');
+        });
+      })
+      .catch(() => {
+        ElMessage.error('删除失败');
+      });
 };
+// 重置搜索框
+const resetQuery = () => {
+  nextTick(() => {
+    userSearchRef.value.resetFields();
+  });
+}
 // 分页改变
 const onHandleSizeChange = (val: number) => {
-	state.tableData.param.pageSize = val;
-	getTableData();
+  state.tableData.param.page.size = val;
+  getTableData();
 };
 // 分页改变
 const onHandleCurrentChange = (val: number) => {
-	state.tableData.param.pageNum = val;
-	getTableData();
+  state.tableData.param.page.current = val;
+  getTableData();
 };
 // 页面加载时
 onMounted(() => {
-	getTableData();
+  getTableData();
 });
 </script>
 
 <style scoped lang="scss">
 .system-user-container {
-	:deep(.el-card__body) {
-		display: flex;
-		flex-direction: column;
-		flex: 1;
-		overflow: auto;
-		.el-table {
-			flex: 1;
-		}
-	}
+  :deep(.el-card__body) {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: auto;
+    .el-table {
+      flex: 1;
+    }
+  }
 }
 </style>
