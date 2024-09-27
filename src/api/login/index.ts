@@ -11,15 +11,15 @@ export function useLoginApi() {
 	return {
 		signIn: (data: object) => {
 			return request({
-				url: '/user/signIn',
+				url: '/sso/login',
 				method: 'post',
 				data,
 			});
 		},
 		signOut: (data: object) => {
 			return request({
-				url: '/user/signOut',
-				method: 'post',
+				url: '/sso/logout',
+				method: 'get',
 				data,
 			});
 		},
