@@ -1,7 +1,7 @@
 <template>
 	<el-form size="large" class="login-content-form">
 		<el-form-item class="login-animation1">
-			<el-input text :placeholder="$t('message.account.accountPlaceholder1')" v-model="state.ruleForm.userName" clearable autocomplete="off">
+			<el-input text :placeholder="$t('message.account.accountPlaceholder1')" v-model="state.ruleForm.account" clearable autocomplete="off">
 				<template #prefix>
 					<el-icon class="el-input__icon"><ele-User /></el-icon>
 				</template>
@@ -60,7 +60,7 @@ import { reactive, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { useI18n } from 'vue-i18n';
-import Cookies from 'js-cookie';
+// import Cookies from 'js-cookie';
 import { storeToRefs } from 'pinia';
 import { useThemeConfig } from '/@/stores/themeConfig';
 import { initFrontEndControlRoutes } from '/@/router/frontEnd';
@@ -68,6 +68,8 @@ import { initBackEndControlRoutes } from '/@/router/backEnd';
 import { Session } from '/@/utils/storage';
 import { formatAxis } from '/@/utils/formatTime';
 import { NextLoading } from '/@/utils/loading';
+import { useLoginApi } from '/@/api/login';
+import { useUserInfo } from '/@/stores/userInfo';
 
 // 定义变量内容
 const { t } = useI18n();
@@ -75,10 +77,11 @@ const storesThemeConfig = useThemeConfig();
 const { themeConfig } = storeToRefs(storesThemeConfig);
 const route = useRoute();
 const router = useRouter();
+const loginApi = useLoginApi();
 const state = reactive({
 	isShowPassword: false,
 	ruleForm: {
-		userName: 'admin',
+		account: 'admin',
 		password: '123456',
 		code: '1234',
 	},
@@ -93,23 +96,25 @@ const currentTime = computed(() => {
 });
 // 登录
 const onSignIn = async () => {
-	state.loading.signIn = true;
+	const res = await loginApi.signIn(state.ruleForm)
 	// 存储 token 到浏览器缓存
-	Session.set('token', Math.random().toString(36).substr(0));
-	// 模拟数据，对接接口时，记得删除多余代码及对应依赖的引入。用于 `/src/stores/userInfo.ts` 中不同用户登录判断（模拟数据）
-	Cookies.set('userName', state.ruleForm.userName);
+	Session.set('token', res.token);
+	// 获取用户信息
+	useUserInfo();
+	state.loading.signIn = true;
 	if (!themeConfig.value.isRequestRoutes) {
 		// 前端控制路由，2、请注意执行顺序
 		const isNoPower = await initFrontEndControlRoutes();
 		signInSuccess(isNoPower);
-	} else {
+	}
+	else {
 		// 模拟后端控制路由，isRequestRoutes 为 true，则开启后端控制路由
 		// 添加完动态路由，再进行 router 跳转，否则可能报错 No match found for location with path "/"
 		const isNoPower = await initBackEndControlRoutes();
 		// 执行完 initBackEndControlRoutes，再执行 signInSuccess
 		signInSuccess(isNoPower);
 	}
-};
+}
 // 登录成功后的跳转
 const signInSuccess = (isNoPower: boolean | undefined) => {
 	if (isNoPower) {

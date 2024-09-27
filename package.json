@@ -1,5 +1,5 @@
 {
-	"name": "vue-next-admin",
+	"name": "fewcode",
 	"version": "2.4.33",
 	"description": "vue3 vite next admin template",
 	"author": "lyt_20201208",
@@ -20,6 +20,7 @@
 		"echarts-gl": "^2.0.9",
 		"echarts-wordcloud": "^2.1.0",
 		"element-plus": "^2.6.1",
+		"highlight.js": "^11.10.0",
 		"js-cookie": "^3.0.5",
 		"js-table2excel": "^1.1.2",
 		"jsplumb": "^2.15.6",
