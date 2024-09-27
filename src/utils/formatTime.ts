@@ -135,3 +135,24 @@ export function formatAxis(param: Date): string {
 	else if (hour < 22) return '晚上好';
 	else return '夜里好';
 }
+
+export function parseDate(cellValue: any) {
+	if (cellValue == null || cellValue == "") return "";
+	let date = new Date(cellValue)
+	let year = date.getFullYear()
+	let month = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1
+	let day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate()
+	return year + '-' + month + '-' + day
+}
+
+export function parseDateTime(cellValue: any) {
+	if (cellValue == null || cellValue == "") return "";
+	let date = new Date(cellValue)
+	let year = date.getFullYear()
+	let month = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1
+	let day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate()
+	let hour = date.getHours() < 10 ? '0' + date.getHours() : date.getHours()
+	let minutes = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()
+	let second = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds()
+	return year + '-' + month + '-' + day + " " + hour + ":" + minutes + ":" + second
+}
