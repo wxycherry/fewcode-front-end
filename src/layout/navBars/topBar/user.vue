@@ -2,39 +2,23 @@
 	<div class="layout-navbars-breadcrumb-user pr15" :style="{ flex: layoutUserFlexNum }">
 		<el-dropdown :show-timeout="70" :hide-timeout="50" trigger="click" @command="onComponentSizeChange">
 			<div class="layout-navbars-breadcrumb-user-icon">
-				<i class="iconfont icon-ziti" :title="$t('message.user.title0')"></i>
+				<i class="iconfont icon-ziti" ></i>
 			</div>
 			<template #dropdown>
 				<el-dropdown-menu>
-					<el-dropdown-item command="large" :disabled="state.disabledSize === 'large'">{{ $t('message.user.dropdownLarge') }}</el-dropdown-item>
-					<el-dropdown-item command="default" :disabled="state.disabledSize === 'default'">{{ $t('message.user.dropdownDefault') }}</el-dropdown-item>
-					<el-dropdown-item command="small" :disabled="state.disabledSize === 'small'">{{ $t('message.user.dropdownSmall') }}</el-dropdown-item>
-				</el-dropdown-menu>
-			</template>
-		</el-dropdown>
-		<el-dropdown :show-timeout="70" :hide-timeout="50" trigger="click" @command="onLanguageChange">
-			<div class="layout-navbars-breadcrumb-user-icon">
-				<i
-					class="iconfont"
-					:class="state.disabledI18n === 'en' ? 'icon-fuhao-yingwen' : 'icon-fuhao-zhongwen'"
-					:title="$t('message.user.title1')"
-				></i>
-			</div>
-			<template #dropdown>
-				<el-dropdown-menu>
-					<el-dropdown-item command="zh-cn" :disabled="state.disabledI18n === 'zh-cn'">简体中文</el-dropdown-item>
-					<el-dropdown-item command="en" :disabled="state.disabledI18n === 'en'">English</el-dropdown-item>
-					<el-dropdown-item command="zh-tw" :disabled="state.disabledI18n === 'zh-tw'">繁體中文</el-dropdown-item>
+					<el-dropdown-item command="large" :disabled="state.disabledSize === 'large'">大型</el-dropdown-item>
+					<el-dropdown-item command="default" :disabled="state.disabledSize === 'default'">默认</el-dropdown-item>
+					<el-dropdown-item command="small" :disabled="state.disabledSize === 'small'">小型</el-dropdown-item>
 				</el-dropdown-menu>
 			</template>
 		</el-dropdown>
 		<div class="layout-navbars-breadcrumb-user-icon" @click="onSearchClick">
-			<el-icon :title="$t('message.user.title2')">
+			<el-icon >
 				<ele-Search />
 			</el-icon>
 		</div>
 		<div class="layout-navbars-breadcrumb-user-icon" @click="onLayoutSetingClick">
-			<i class="icon-skin iconfont" :title="$t('message.user.title3')"></i>
+			<i class="icon-skin iconfont" ></i>
 		</div>
 		<el-popover
 			ref="userNewsRef"
@@ -51,7 +35,6 @@
 		<div class="layout-navbars-breadcrumb-user-icon mr10" @click="onScreenfullClick">
 			<i
 				class="iconfont"
-				:title="state.isScreenfull ? $t('message.user.title6') : $t('message.user.title5')"
 				:class="!state.isScreenfull ? 'icon-fullscreen' : 'icon-tuichuquanping'"
 			></i>
 		</div>
@@ -65,8 +48,8 @@
 			</span>
 			<template #dropdown>
 				<el-dropdown-menu>
-					<el-dropdown-item command="/personal">{{ $t('message.user.dropdown2') }}</el-dropdown-item>
-					<el-dropdown-item divided command="logOut">{{ $t('message.user.dropdown5') }}</el-dropdown-item>
+					<el-dropdown-item command="/personal">个人中心</el-dropdown-item>
+					<el-dropdown-item divided command="logOut">退出登录</el-dropdown-item>
 				</el-dropdown-menu>
 			</template>
 		</el-dropdown>
@@ -79,7 +62,6 @@ import { defineAsyncComponent, ref, unref, computed, reactive, onMounted } from 
 import { useRouter } from 'vue-router';
 import { ElMessageBox, ElMessage, ClickOutside as vClickOutside } from 'element-plus';
 import screenfull from 'screenfull';
-import { useI18n } from 'vue-i18n';
 import { storeToRefs } from 'pinia';
 import { useUserInfo } from '/@/stores/userInfo';
 import { useThemeConfig } from '/@/stores/themeConfig';
@@ -93,7 +75,6 @@ const Search = defineAsyncComponent(() => import('/@/layout/navBars/topBar/searc
 // 定义变量内容
 const userNewsRef = ref();
 const userNewsBadgeRef = ref();
-const { locale, t } = useI18n();
 const router = useRouter();
 const stores = useUserInfo();
 const storesThemeConfig = useThemeConfig();
@@ -137,43 +118,43 @@ const onLayoutSetingClick = () => {
 };
 // 下拉菜单点击时
 const onHandleCommandClick = (path: string) => {
-	if (path === 'logOut') {
-		ElMessageBox({
-			closeOnClickModal: false,
-			closeOnPressEscape: false,
-			title: t('message.user.logOutTitle'),
-			message: t('message.user.logOutMessage'),
-			showCancelButton: true,
-			confirmButtonText: t('message.user.logOutConfirm'),
-			cancelButtonText: t('message.user.logOutCancel'),
-			buttonSize: 'default',
-			beforeClose: (action, instance, done) => {
-				if (action === 'confirm') {
-					instance.confirmButtonLoading = true;
-					instance.confirmButtonText = t('message.user.logOutExit');
-					setTimeout(() => {
-						done();
-						setTimeout(() => {
-							instance.confirmButtonLoading = false;
-						}, 300);
-					}, 700);
-				} else {
-					done();
-				}
-			},
-		})
-			.then(async () => {
-				// 清除缓存/token等
-				Session.clear();
-				// 使用 reload 时，不需要调用 resetRoute() 重置路由
-				window.location.reload();
-			})
-			.catch(() => {});
-	} else if (path === 'wareHouse') {
-		window.open('https://gitee.com/lyt-top/vue-next-admin');
-	} else {
-		router.push(path);
-	}
+  if (path === 'logOut') {
+    ElMessageBox({
+      closeOnClickModal: false,
+      closeOnPressEscape: false,
+      title: '提示',
+      message: '此操作将退出登录, 是否继续?',
+      showCancelButton: true,
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      buttonSize: 'default',
+      beforeClose: (action, instance, done) => {
+        if (action === 'confirm') {
+          instance.confirmButtonLoading = true;
+          instance.confirmButtonText = '退出中';
+          setTimeout(() => {
+            done();
+            setTimeout(() => {
+              instance.confirmButtonLoading = false;
+            }, 300);
+          }, 700);
+        } else {
+          done();
+        }
+      },
+    })
+        .then(async () => {
+          // 清除缓存/token等
+          Session.clear();
+          // 使用 reload 时，不需要调用 resetRoute() 重置路由
+          window.location.reload();
+        })
+        .catch(() => {});
+  } else if (path === 'wareHouse') {
+    window.open('https://gitee.com/lyt-top/vue-next-admin');
+  } else {
+    router.push(path);
+  }
 };
 // 菜单搜索点击
 const onSearchClick = () => {
@@ -184,29 +165,8 @@ const onComponentSizeChange = (size: string) => {
 	Local.remove('themeConfig');
 	themeConfig.value.globalComponentSize = size;
 	Local.set('themeConfig', themeConfig.value);
-	initI18nOrSize('globalComponentSize', 'disabledSize');
 	window.location.reload();
 };
-// 语言切换
-const onLanguageChange = (lang: string) => {
-	Local.remove('themeConfig');
-	themeConfig.value.globalI18n = lang;
-	Local.set('themeConfig', themeConfig.value);
-	locale.value = lang;
-	other.useTitle();
-	initI18nOrSize('globalI18n', 'disabledI18n');
-};
-// 初始化组件大小/i18n
-const initI18nOrSize = (value: string, attr: string) => {
-	(<any>state)[attr] = Local.get('themeConfig')[value];
-};
-// 页面加载时
-onMounted(() => {
-	if (Local.get('themeConfig')) {
-		initI18nOrSize('globalComponentSize', 'disabledSize');
-		initI18nOrSize('globalI18n', 'disabledI18n');
-	}
-});
 </script>
 
 <style scoped lang="scss">
