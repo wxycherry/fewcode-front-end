@@ -3,7 +3,7 @@ import pinia from '/@/stores/index';
 import App from '/@/App.vue';
 import router from '/@/router';
 import { directive } from '/@/directive/index';
-import { i18n } from '/@/i18n/index';
+// import { i18n } from '/@/i18n/index';
 import other from '/@/utils/other';
 
 import ElementPlus from 'element-plus';
@@ -19,4 +19,4 @@ directive(app);
 other.elSvg(app);
 // 全局方法挂载
 app.config.globalProperties.parseDict = parseDict
-app.use(pinia).use(router).use(ElementPlus).use(i18n).use(VueGridLayout).mount('#app');
+app.use(pinia).use(router).use(ElementPlus).use(VueGridLayout).mount('#app');

@@ -19,7 +19,7 @@
 				>
 					<i class="iconfont icon-webicon318 layout-navbars-tagsview-ul-li-iconfont" v-if="isActive(v)"></i>
 					<SvgIcon :name="v.meta.icon" v-if="!isActive(v) && getThemeConfig.isTagsviewIcon" class="pr5" />
-					<span>{{ setTagsViewNameI18n(v) }}</span>
+					<!-- <span>{{ setTagsViewNameI18n(v) }}</span> -->
 					<template v-if="isActive(v)">
 						<SvgIcon
 							name="ele-RefreshRight"
@@ -98,11 +98,11 @@ const getThemeConfig = computed(() => {
 	return themeConfig.value;
 });
 // 设置 自定义 tagsView 名称、 自定义 tagsView 名称国际化
-const setTagsViewNameI18n = computed(() => {
-	return (v: RouteItem) => {
-		return other.setTagsViewNameI18n(v);
-	};
-});
+// const setTagsViewNameI18n = computed(() => {
+// 	return (v: RouteItem) => {
+// 		return other.setTagsViewNameI18n(v);
+// 	};
+// });
 // 设置 tagsView 高亮
 const isActive = (v: RouteItem) => {
 	if (getThemeConfig.value.isShareTagsView) {

@@ -5,7 +5,7 @@
 				<el-autocomplete
 					v-model="state.menuQuery"
 					:fetch-suggestions="menuSearch"
-					:placeholder="$t('message.user.searchPlaceholder')"
+					:placeholder="menu"
 					ref="layoutMenuAutocompleteRef"
 					@select="onHandleSelect"
 					:fit-input-width="true"
@@ -18,7 +18,7 @@
 					<template #default="{ item }">
 						<div>
 							<SvgIcon :name="item.meta.icon" class="mr5" />
-							{{ $t(item.meta.title) }}
+							{{ item.meta.title}}
 						</div>
 					</template>
 				</el-autocomplete>
@@ -30,7 +30,6 @@
 <script setup lang="ts" name="layoutBreadcrumbSearch">
 import { reactive, ref, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
-import { useI18n } from 'vue-i18n';
 import { storeToRefs } from 'pinia';
 import { useTagsViewRoutes } from '/@/stores/tagsViewRoutes';
 
@@ -38,14 +37,13 @@ import { useTagsViewRoutes } from '/@/stores/tagsViewRoutes';
 const storesTagsViewRoutes = useTagsViewRoutes();
 const { tagsViewRoutes } = storeToRefs(storesTagsViewRoutes);
 const layoutMenuAutocompleteRef = ref();
-const { t } = useI18n();
 const router = useRouter();
 const state = reactive<SearchState>({
 	isShowSearch: false,
 	menuQuery: '',
 	tagsViewList: [],
 });
-
+const menu = "菜单搜索：支持中文、路由路径"
 // 搜索弹窗打开
 const openSearch = () => {
 	state.menuQuery = '';
