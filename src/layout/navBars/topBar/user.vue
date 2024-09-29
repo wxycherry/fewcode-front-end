@@ -17,9 +17,9 @@
 				<ele-Search />
 			</el-icon>
 		</div>
-		<!-- <div class="layout-navbars-breadcrumb-user-icon" @click="onLayoutSetingClick">
+		<div class="layout-navbars-breadcrumb-user-icon" @click="onLayoutSetingClick">
 			<i class="icon-skin iconfont" ></i>
-		</div> -->
+		</div>
 		<el-popover
 			ref="userNewsRef"
 			:virtual-ref="userNewsBadgeRef"
